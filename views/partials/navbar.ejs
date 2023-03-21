@@ -1,0 +1,67 @@
+<nav
+  class="shadow navbar navbar-expand-lg navbar-dark"
+  style="font-family: Montserrat; background-color: rgb(121, 194, 120) !important"
+>
+  <div class="container-fluid d-flex justify-content-between">
+    <span class="font-weight-bolder text-white navbar-brand ms-4">
+      <img
+        src="https://res.cloudinary.com/dyvrvbcxx/image/upload/v1679406609/football_2_zbnsdr.png"
+        alt=""
+        class="mx-2"
+        width="32"
+      />
+    </span>
+    <button
+      aria-controls="basic-navbar-nav"
+      type="button"
+      aria-label="Toggle navigation"
+      class="navbar-toggler collapsed"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="navbar-collapse collapse" id="basic-navbar-nav">
+      <div class="me-auto navbar-nav">
+        <a class="font-weight-bolder text-white nav-link" href="/">Home</a>
+        <% if (typeof user !== 'undefined' && user.isAdmin) { %>
+
+        <a class="font-weight-bolder text-white nav-link" href="/nations">Nations</a>
+        <a class="font-weight-bolder text-white nav-link" href="/players">Players</a>
+        <a class="font-weight-bolder text-white nav-link" href="/users">Users</a>
+        <% } %>
+      </div>
+      <div class="navbar-nav">
+        <form class="d-flex" action="/search">
+          <input
+            class="form-control me-2"
+            type="search"
+            placeholder="Search"
+            value="<% if (typeof searchQuery  != 'undefined') { %><%= searchQuery %><% } %>"
+            name="search"
+            aria-label="Search"
+            id="search-input"
+          />
+        </form>
+        <% if (typeof user !=='undefined' ) { %>
+        <div class="" style="display: flex; align-items: center">
+          <a style="color: white; text-decoration: none" class="me-4 ms-2" href="/auth/profile/<%= user.id %>"
+            >Profile</a
+          >
+          <a
+            type="button"
+            href="/auth/logout"
+            class="font-weight-bolder text-white me-4 btn btn-secondary"
+            style="background-color: rgb(121, 194, 120); width: 120px; border: none; border-radius: 8px"
+          >
+            Logout
+          </a>
+        </div>
+        <% } else { %>
+        <a href="/login" role="button" class="font-weight-bolder text-white nav-link" aria-disabled="true"> Login </a>
+        <a href="/register" role="button" class="font-weight-bolder text-white nav-link me-4" aria-disabled="true">
+          Register
+        </a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</nav>

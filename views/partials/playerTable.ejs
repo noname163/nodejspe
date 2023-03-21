@@ -1,0 +1,31 @@
+<div id="player-table">
+  <% if (typeof isEmpty!=='undefined' && isEmpty==true) { %>
+    <h1>Not Found Player Match With Your Require</h1>
+        <% } %>
+  <div class="row">
+    <% list.forEach(player => { %>
+      <div class="col-md-4">
+        <div class="card mr-3 mb-2" style="width: 18rem;">
+          <img src="<%= player.image %>" style="height: 262px;" class="card-img-top mt-1" alt="...">
+          <div class="card-body">
+            <h5 class="card-title">
+              <img
+              src="<%= player.nation.image %>"
+              class="rounded-circle"
+              style="width: 40px; height: 40px; margin-right: 20px"
+            /> <%= player.name %> - Goals: <%= player.goals %>
+            </h5>
+          </div>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">Club: <%= player.club %>
+            </li>
+            <li class="list-group-item">Position: <%= player.position %>
+            </li>
+            <li class="list-group-item">Is Captain: <%= player.isCaptain==true?"Yes":"No" %>
+            </li>
+          </ul>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</div>

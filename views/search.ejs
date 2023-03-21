@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('./partials/head.ejs') %>
+  <body>
+    <%- include('./partials/navbar.ejs') %>
+    <h1 class="text-center">Search Players</h1>
+
+    <div class="container">
+      <% if (total === 0) { %>
+      <div class="alert alert-warning" role="alert">Name not found please try again</div>
+      <% } %>
+    </div>
+    <div class="row mt-3">
+      <% list.forEach(player => { %>
+      <div class="col-md-4 mt-2">
+        <div class="card mx-auto text-center" style="width: 18rem">
+          <div class="d-flex justify-content-center align-items-center text-center mt-2 mb-2">
+            <img
+              src="<%= player.nation.image %>"
+              class="rounded-circle"
+              style="width: 40px; height: 40px; margin-right: 20px"
+            />
+            <h5 class="card-title mr-2"><%= player.name %></h5>
+          </div>
+          <img
+            class="card-img-top mx-auto"
+            src="<%= player.image%>"
+            style="width: 90%; height: 200px"
+            alt="Card image cap"
+          />
+          <div class="card-body">
+            <div class="d-flex justify-content-center mb-2">
+              <img
+                src="https://icon-library.com/images/soccer-goal-icon/soccer-goal-icon-19.jpg"
+                style="width: 30px; margin-right: 10px"
+                alt="goals icon"
+              />
+              <h5 class="card-title mr-2"><%= player.goals %></h5>
+            </div>
+            <a href="/players/<%= player._id %>" class="btn btn-primary text-center">View Detail</a>
+          </div>
+        </div>
+      </div>
+      <% }) %> <% if (pages>=2) { %>
+      <ul class="pagination d-flex justify-content-center mt-3">
+        <% for( let a = 1; a <= pages; a++ ) { %>
+        <li class="page-item">
+          <a class="page-link" href="/search?page=<%= a %>&search=<%= searchQuery %>"><%= a %></a>
+        </li>
+        <% } %>
+      </ul>
+      <% } %>
+    </div>
+  </body>
+</html>

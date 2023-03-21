@@ -1,0 +1,23 @@
+<script>
+    $(document).ready(function() {
+      // Handle search form submission
+      $('#search-form').submit(function(event) {
+        event.preventDefault(); // Prevent form from submitting normally
+        var searchTerm = $('#search-input').val(); // Get the search term
+        var url = '/search?term=' + searchTerm; // Construct the URL with search term
+        $.ajax({
+          url: url,
+          type: 'GET',
+          dataType: 'html',
+          success: function(data) {
+            // Replace player table with search results
+            $('#player-table').html(data);
+          },
+          error: function(error) {
+            console.log(error);
+          }
+        });
+      });
+    });
+    </script>
+    

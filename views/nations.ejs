@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('./partials/head.ejs') %>
+  <body>
+    <%- include('./partials/navbar.ejs') %>
+    <div class="container">
+      <h1 class="text-center">List of Nations</h1>
+      <% if (typeof error != 'undefined') { %>
+      <div class="alert alert-danger"><%= error %></div>
+      <% } %>
+
+      <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#nationAdd">
+        Create Nation
+      </button>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Img</th>
+            <th scope="col">Name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% nations.forEach(nation => { %>
+          <tr>
+            <td><img src="<%= nation.image%>" style="width: 50px; height: 50px" /></td>
+            <td><p class="text-truncate" style="max-width: 150px" title="<%= nation.name %>"><%= nation.name %></p></td>
+            <td>
+              <p class="text-truncate" style="max-width: 150px" title="<%= nation.description %>">
+                <%= nation.description %>
+              </p>
+            </td>
+            <td>
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#nationUp_<%= nation._id %>"
+              >
+                Update
+              </button>
+              <button
+                type="button"
+                class="btn btn-danger"
+                data-bs-toggle="modal"
+                data-bs-target="#nationDel_<%= nation._id %>"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+
+          <!-- Delete -->
+
+          <!-- Modal -->
+          <div
+            class="modal fade"
+            id="nationDel_<%= nation._id %>"
+            tabindex="-1"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog">
+              <form action="nations/delete/<%= nation._id %>">
+                <div class="modal-content">
+                  <div class="modal-header bg-danger">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">Are You Sure To Delete Nation Name: <%= nation.name %> ?</div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="submit" class="btn btn-primary">Yes</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- +++++++++++++++++ -->
+
+          <!-- Update -->
+
+          <div
+            class="modal fade"
+            id="nationUp_<%= nation._id %>"
+            tabindex="-1"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true"
+          >
+            <form action="nations/update/" method="post" enctype="multipart/form-data">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header bg-primary">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal Update</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="mb-3" hidden>
+                      <input type="text" class="form-control" value="<%= nation._id %>" id="_id" name="_id" />
+                    </div>
+                    <div class="mb-3">
+                      <img
+                        src="<%= nation.image %>"
+                        id="profileImg"
+                        class="rounded mx-auto d-block"
+                        style="max-width: 100%; max-height: 200px; margin-top: 10px"
+                      />
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="formFile" class="form-label">New Image</label>
+                      <input
+                        class="form-control"
+                        type="file"
+                        id="formFile"
+                        name="image"
+                        onchange="previewNewImage(this)"
+                      />
+                    </div>
+
+                    <div class="mb-3" hidden>
+                      <label for="formFile" class="form-label">Image</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        value="<%= nation.image %>"
+                        id="formFile"
+                        name="originImg"
+                      />
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="name" class="form-label">Name</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        value="<%= nation.name %>"
+                        id="name"
+                        name="name"
+                        aria-describedby="emailHelp"
+                        required
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <label for="description" class="form-label">Description</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        value="<%= nation.description %>"
+                        id="description"
+                        name="description"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <!-- +++++++++++ -->
+
+          <% }) %>
+        </tbody>
+      </table>
+      <ul class="pagination">
+        <% for( let a = 1; a <= pages; a++ ) { %>
+        <li class="page-item">
+          <a class="page-link" href="?page=<%= a; %>"><%= a %></a>
+        </li>
+        <% } %>
+      </ul>
+    </div>
+  </body>
+</html>
+
+<!-- Add modal -->
+<div class="modal fade" id="nationAdd" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <form action="nations/add" method="POST" enctype="multipart/form-data">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-success">
+          <h5 class="modal-title" id="exampleModalLabel">Modal Add</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <img
+            id="preview"
+            class="rounded mx-auto d-block"
+            style="max-width: 100%; max-height: 200px; margin-top: 10px"
+          />
+          <div class="mb-3">
+            <label for="formFile" class="form-label">Image</label>
+
+            <input
+              class="form-control"
+              type="file"
+              id="formFile"
+              name="image"
+              required
+              onchange="previewImage(event)"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" aria-describedby="emailHelp" required />
+          </div>
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <input type="text" class="form-control" id="description" name="description" required />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<script>
+  function previewNewImage(input) {
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        document.getElementById("profileImg").src = e.target.result;
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  function previewImage(event) {
+    var reader = new FileReader();
+    reader.onload = function () {
+      var preview = document.getElementById("preview");
+      preview.src = reader.result;
+    };
+    reader.readAsDataURL(event.target.files[0]);
+  }
+</script>

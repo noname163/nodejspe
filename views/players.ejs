@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('./partials/head.ejs') %>
+  <body>
+    <div class="pb-1">
+      <%- include('./partials/navbar.ejs') %>
+    </div>
+    <div class="container">
+      <% if ((typeof data!=='undifined') || (typeof data!==[])) { %>
+       <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#playerAdd">
+          Create Player
+        </button>
+      <% } %>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Img</th>
+            <th scope="col">Name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Nation</th>
+            <th scope="col">Club</th>
+            <th scope="col">Position</th>
+            <th scope="col">Goal</th>
+            <th scope="col">Captain</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% players.forEach(player => { %>
+          <tr>
+            <td><img src="<%= player.image%>" style="width: 50px; height: 50px" /></td>
+            <td><p class="text-truncate" style="max-width: 150px;" title="<%= player.name %>"><%= player.name %></p></td>
+            <td><p class="text-truncate" style="max-width: 150px;" title="<%= player.description %>"><%= player.description %></p></td>
+            <td>
+              <img src="<%= player.nation.image%>" style="width: 50px; height: 50px" />
+            </td>
+            <td><%= player.club %></td>
+            <td><%= player.position %></td>
+            <td><%= player.goals %></td>
+            <td><%= player.isCaptain == true ? "Yes":"No" %></td>
+            <td>
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#playerUp_<%= player._id %>"
+              >
+                Update
+              </button>
+              <button
+                type="button"
+                class="btn btn-danger"
+                data-bs-toggle="modal"
+                data-bs-target="#playerDel_<%= player._id %>"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+
+          <!-- Delete Modal -->
+          <div
+            class="modal fade"
+            id="playerDel_<%= player._id %>"
+            tabindex="-1"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog">
+              <form action="players/delete/<%= player._id %>">
+                <div class="modal-content">
+                  <div class="modal-header bg-danger">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">Are You Sure To Delete Player Name: <%= player.name %> ?</div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="submit" class="btn btn-primary">Yes</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          <!--+++++++++++++++-->
+
+          <!-- Update Modal -->
+
+          <div
+            class="modal fade"
+            id="playerUp_<%= player._id %>"
+            tabindex="-1"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true"
+          >
+            <form action="players/update" method="POST" enctype="multipart/form-data">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header bg-primary">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal Update</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="mb-3" hidden>
+                      <input
+                        type="text"
+                        class="form-control"
+                        value="<%= player._id %>"
+                        id="_id"
+                        name="_id"
+                        aria-describedby="emailHelp"
+                        required
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <img
+                      id="profileImg"
+                        src="<%= player.image %>"
+                        class="rounded mx-auto d-block"
+                        style="max-width: 100%; max-height: 200px; margin-top: 10px"
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <label for="formFile" class="form-label">New Image</label>
+                      <input class="form-control" value="<%= player.image %>" type="text" id="file" name="originImg" hidden/>
+                      <input class="form-control" onchange="previewNewImage(this)" type="file" id="formFile" name="image" />
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="name" class="form-label">Name</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        value="<%= player.name %>"
+                        id="name"
+                        name="name"
+                        aria-describedby="emailHelp"
+                        required
+                      />
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="description" class="form-label">Description</label>
+                      <input type="text"  value="<%= player.description %>"class="form-control" id="description" name="description" required />
+                    </div>
+
+                   
+                    <div class="mb-3">
+                      <label for="description" class="form-label">Nation</label>
+                      <select class="form-select" name="nation" required>
+                        <option value="">Open this select nation</option>
+                        <% data.forEach(item => { %>
+                         <option value="<%= item._id %>" name="nation" <%= player.nation.name == item.name ? "selected": "" %> ><%= item.name %></option>
+                        <% }) %>
+                      </select>
+                    </div>
+                    <div class="mb-3">
+                      <label for="description" class="form-label">Club</label>
+                      <select class="form-select" name="club" aria-label="Default select example" required>
+                        <option value="">Open this select club</option>
+                        <% clubs.forEach(function(clubs){ %>
+                          <option <%= player.club.toString()===clubs.toString()?'selected':'' %> ><%= clubs %></option>
+                          <% }); %>
+                      </select>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="description" class="form-label">Position</label>
+                      <select class="form-select" name="position" aria-label="Default select example" required>
+                        <option value="">Open this select position</option>
+                        <% positions.forEach(function(position){ %>
+                          <option <%= player.position.toString()===position.toString()?'selected':'' %> ><%= position %></option>
+                          <% }); %>
+                      </select>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="goals" class="form-label">Goals</label>
+                      <input type="number" class="form-control" id="goals" name="goals" value="<%= player.goals %>" min="0" max="100" />
+                    </div>
+          
+                    <div class="mb-3 d-flex mx-auto">
+                      <label for="captain" class="form-label ml-3" style="margin-right:10px">Captain </label>
+                      <div class="form-check form-switch form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="isCaptain" name="isCaptain" value="true" <%= player.isCaptain == true?"checked":"" %>>
+                      </div>     
+                    </div>
+                    
+
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <!--  -->
+
+          <% }) %>
+        </tbody>
+      </table>
+
+      <ul class="pagination">
+        
+        <% for( let a = 1; a <= pages; a++ ) { %>
+          <li class="page-item">
+            <a class="page-link" href="?page=<%= a; %>"><%= a %></a>
+          </li>
+        <% } %>
+      </ul>
+      
+    </div>
+  </body>
+</html>
+
+<!-- Add modal -->
+<div class="modal fade" id="playerAdd" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <form action="players/add" method="POST" enctype="multipart/form-data">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-success">
+          <h5 class="modal-title" id="exampleModalLabel">Modal Add</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <img
+              id="preview"
+              class="rounded mx-auto d-block"
+              style="max-width: 100%; max-height: 200px; margin-top: 10px"
+            />
+          <div class="mb-3">
+            <label for="formFile" class="form-label">Image</label>
+
+            <input
+              class="form-control"
+              type="file"
+              id="formFile"
+              name="image"
+              required
+              onchange="previewImage(event)"
+            />
+            
+          </div>
+
+          <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" aria-describedby="emailHelp" required />
+          </div>
+
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <input type="text" class="form-control" id="description" name="description" required />
+          </div>
+
+          <div class="mb-3">
+            <label for="description" class="form-label">Nation</label>
+            <select class="form-select" name="nation" aria-label="Default select example" required>
+              <option selected value="">Open this select nation</option>
+              <% data.forEach(item => { %>
+              <option value="<%= item._id %>" name="nation"><%= item.name %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="description" class="form-label">Club</label>
+            <select class="form-select" name="club" aria-label="Default select example" required>
+              <option selected value="">Open this select club</option>
+              <option value="Arsenal">Arsenal</option>
+              <option value="Chelsea">Chelsea</option>
+              <option value="Liverpool">Liverpool</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="description" class="form-label">Position</label>
+            <select class="form-select" name="position" aria-label="Default select example" required>
+              <option selected value="">Open this select position</option>
+              <option value="Goalkeeper">Goalkeeper</option>
+              <option value="Attack">Attack</option>
+              <option value="Defensive Midfielder">Defensive Midfielder</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="goals" class="form-label">Goals</label>
+            <input type="number" class="form-control" id="goals" name="goals" value="0" min="0" max="100" />
+          </div>
+
+          <div class="mb-3 d-flex mx-auto">
+            <label for="captain" class="form-label ml-3" style="margin-right:10px">Captain </label>
+            <div class="form-check form-switch form-check-inline">
+              <input class="form-check-input" type="checkbox" id="isCaptain" name="isCaptain" value="true">
+            </div>     
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+  function previewNewImage(input) {
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        document.getElementById("profileImg").src = e.target.result;
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  function previewImage(event) {
+    var reader = new FileReader();
+    reader.onload = function () {
+      var preview = document.getElementById("preview");
+      preview.src = reader.result;
+    };
+    reader.readAsDataURL(event.target.files[0]);
+  }
+</script>

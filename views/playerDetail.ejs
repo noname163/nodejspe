@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('./partials/head.ejs') %>
+  <body>
+    <%- include('./partials/navbar.ejs') %>
+    <h1 class="text-center text-info"><%= player.name %></h1>
+    <form action="/players/form-update/<%= player._id %>">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <div>
+              <img
+                src="<%= player.image %>"
+                class="rounded mx-auto my-auto d-block mb-3"
+                alt="nation img"
+                style="height: 250px; width: 250px"
+              />
+
+              <div class="mb-3">
+                <label for="disabledTextInput" class="form-label">Nation: </label>
+                <img
+                  src="<%= player.nation.image %>"
+                  class="rounded mx-auto my-auto d-block mb-3"
+                  alt="nation img"
+                  style="height: 100px; width: 250px"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="exampleFormControlTextarea1" class="form-label">Description: </label>
+              <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" disabled>
+<%= player.description %></textarea
+              >
+            </div>
+            <div class="mb-3">
+              <label for="disabledTextInput" class="form-label">Club: </label>
+              <input
+                type="text"
+                id="disabledTextInput"
+                value="<%= player.club %>"
+                class="form-control"
+                placeholder="Disabled input"
+                disabled
+              />
+            </div>
+            <div class="mb-3">
+              <label for="disabledTextInput" class="form-label">Position: </label>
+              <input
+                type="text"
+                id="disabledTextInput"
+                value="<%= player.position %>"
+                class="form-control"
+                placeholder="Disabled input"
+                disabled
+              />
+            </div>
+            <div class="mb-3">
+              <label for="disabledTextInput" class="form-label">Goals: </label>
+              <input
+                type="text"
+                id="disabledTextInput"
+                value="<%= player.goals %>"
+                class="form-control"
+                placeholder="Disabled input"
+                disabled
+              />
+            </div>
+            <div class="mb-3">
+              <label for="disabledTextInput" class="form-label">Captain: </label>
+              <input type="text" id="disabledTextInput" value="<%= player.isCaptain==true?"Yes":"No" %>"
+              class="form-control" placeholder="Disabled input" disabled />
+            </div>
+            <div class="d-grid gap-2">
+              <a href="/" class="btn btn-secondary" type="button">Return</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </body>
+</html>

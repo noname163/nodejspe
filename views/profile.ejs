@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" >
+<%- include('./partials/head.ejs') %>
+
+  <body style="
+      background-image: url(https://t4.ftcdn.net/jpg/05/28/03/83/360_F_528038322_ramYQzzXaTgaKARfXNcFZYI0qGSrZ5IT.jpg);
+      background-size: cover;
+    ">
+    <%- include('./partials/navbar.ejs') %>
+      </div>
+      <%- include('./partials/userProfile.ejs') %>
+      <div class="modal fade" id="playerAdd" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <form action="/auth/updateProfile" id="update-profile-form" method="POST" enctype="multipart/form-data">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div class="mb-3" hidden>
+                  <input type="text" class="form-control" value="<%= user._id %>" id="_id" name="_id" required />
+                </div>
+                <div class="row">
+                  <div class="col-6">
+                    <div class="mb-3">
+                      <img id="profileImg" src="<%= user.image %>" class="rounded mx-auto d-block"
+                        style="max-width: 100%; max-height: 200px; margin-top: 10px" />
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="mb-3">
+                      <label for="name" class="form-label">Email</label>
+                      <input type="email" class="form-control" value="<%= user.email %>" id="email" name="email"
+                        disabled />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-6">
+                    <div class="mb-3">
+                      <label for="formFile" class="form-label">New Image</label>
+                      <input class="form-control" value="<%= user.image %>" type="text" name="originImg" hidden />
+                      <input class="form-control" type="file" id="formFile" name="image"
+                        onchange="previewImage(this)" />
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="mb-3">
+                      <label for="name" class="form-label">Name</label>
+                      <input type="text" class="form-control" value="<%= user.name %>" id="name" name="name" />
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-6">
+                    <div class="mb-3">
+                      <label for="confirmPassword" class="form-label">Old Password</label>
+                      <input type="text" class="form-control" value="<%= user.password %>" id="password" name="password"
+                        hidden />
+                      <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" />
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="mb-3">
+                      <label for="name" class="form-label">DOB</label>
+                      <input type="date" class="form-control"
+                        value="<%= user.dob ? user.dob.toISOString().substr(0,10) : '' %>" id="dob" name="dob" />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-6">
+                    <div class="mb-3">
+                      <label for="newPassword" class="form-label">New Password</label>
+                      <input type="password" class="form-control" id="newPassword" name="newPassword" />
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="mb-3">
+                      <label for="newPassword" class="form-label">Confirm New Password</label>
+                      <input type="password" class="form-control" id="confirmNewPassword" name="confirmNewPassword" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                <button type="submit" class="btn btn-primary">Update</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+  </body>
+
+  <script>
+    $('#update-profile-form').on('submit', function (e) {
+      e.preventDefault();
+      console.log("Update profile")
+      var formData = $(this).serialize();
+
+      $.ajax({
+        url: '/auth/updateProfile',
+        type: 'POST',
+        data: formData,
+        success: function (response) {
+          $('#body').replaceWith(response);
+          $("#playerAdd").modal('hide');
+        },
+        error: function (xhr) {
+          console.log(xhr.responseText);
+          $('#update-profile-message').text('There was an error updating your profile.');
+        }
+      });
+    });
+  </script>
+
+</html>
+
+
+<script>
+
+  function previewImage(input) {
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        document.getElementById("profileImg").src = e.target.result;
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+</script>

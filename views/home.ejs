@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('./partials/head.ejs') %>
+
+  <body>
+    <div class="pb-1">
+      <%- include('./partials/navbar.ejs') %>
+    </div>
+    <div class="container">
+
+      <div class="row">
+        <div class="col-2 pt-3">
+          <div>
+            <p>Nation</p>
+            <% nations.forEach(nation=> { %>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" value="<%= nation.id %>" data-filter="nation" name="nation"
+                  id="flexRadioDefault1">
+                <label class="form-check-label" for="flexRadioDefault1">
+                  <%= nation.name %>
+                </label>
+              </div>
+              <% }) %>
+          </div>
+          <p>Club</p>
+          <% clubs.forEach(club=> { %>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" value="<%= club %>" data-filter="club" name="club"
+                id="flexRadioDefault1">
+              <label class="form-check-label" for="flexRadioDefault1">
+                <%= club %>
+              </label>
+            </div>
+            <% }) %>
+              <p>Position</p>
+              <% positions.forEach(position=> { %>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" value="<%= position %>" data-filter="position"
+                    name="position" id="flexRadioDefault1">
+                  <label class="form-check-label" for="flexRadioDefault1">
+                    <%=position%>
+                  </label>
+                </div>
+                <% }) %>
+        </div>
+        <div class="row col-10 mt-3">
+          <%- include('./partials/playerTable.ejs') %>
+            <% if (pages>=2) { %>
+              <ul class="pagination d-flex justify-content-center mt-3">
+                <% for( let a=1; a <=pages; a++ ) { %>
+                  <li class="page-item">
+                    <a class="page-link" href="?page=<%= a; %>">
+                      <%= a %>
+                    </a>
+                  </li>
+                  <% } %>
+              </ul>
+              <% } %>
+        </div>
+      </div>
+    </div>
+    </div>
+    <script>
+      $(document).ready(function () {
+        $('#search-input').on('keyup', function () {
+          let searchTerm = $(this).val().toLowerCase().trim();
+          let nation = $('input[name=nation]:checked').val();
+          let club = $('input[name=club]:checked').val();
+          let position = $('input[name=position]:checked').val();
+          let searchQuery = $(this).data('search');
+
+          $.ajax({
+            url: '/search',
+            type: 'GET',
+            data: {
+              search: searchTerm,
+              page: 1,
+              nation: nation,
+              club: club,
+              position: position,
+            },
+            success: function (result) {
+              console.log(result)
+              $('#player-table').replaceWith(result);
+            },
+            error: function (xhr, status, error) {
+              console.error(error);
+            },
+          });
+        });
+
+
+        $('input[type=radio]').on('change', function () {
+          let nation = $('input[name=nation]:checked').val();
+          let club = $('input[name=club]:checked').val();
+          let position = $('input[name=position]:checked').val();
+          let searchQuery = $('#search-input').data('search');
+
+          $.ajax({
+            url: '/filter',
+            type: 'GET',
+            data: {
+              page: 1,
+              nation: nation,
+              club: club,
+              position: position,
+            },
+            success: function (result) {
+              console.log("Filter")
+              console.log(result)
+              $('#player-table').replaceWith(result);
+            },
+            error: function (xhr, status, error) {
+              console.error(error);
+            },
+          });
+        });
+        function fetchPlayerData(pageNumber) {
+          let nation = $('input[name=nation]:checked').val();
+          let club = $('input[name=club]:checked').val();
+          let position = $('input[name=position]:checked').val();
+
+          $.ajax({
+            url: '/pagination',
+            type: 'GET',
+            data: {
+              page: pageNumber,
+              nation: nation,
+              club: club,
+              position: position
+            },
+            success: function (result) {
+              // Replace the player table with the new HTML data
+              $('#player-table').replaceWith(result);
+            },
+            error: function (xhr, status, error) {
+              console.error(error);
+            }
+          });
+        }
+
+        // Define a click event listener for the pagination links
+        $('.pagination .page-link').on('click', function (e) {
+          e.preventDefault();
+
+          let pageNumber = $(this).text();
+          fetchPlayerData(pageNumber);
+        });
+      });
+    </script>
+  </body>
+
+</html>
